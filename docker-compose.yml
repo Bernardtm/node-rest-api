@@ -1,0 +1,49 @@
+version: '3.3'
+
+services:
+  app:
+    container_name: node-rest-api
+    build: .
+    ports:
+      - "3333:3333"
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    container_name: database
+    image: postgres:11
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: gobarber
+
+  mongodb:
+    container_name: mongobarber
+    image: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+
+  redis:
+    container_name: redisbarber
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+# docker run --name database -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres:11
+# docker run --name mongobarber -p 27017:27017 -d -t mongo
+# docker run --name redisbarber -p 6379:6379 -d -t redis:alpine
